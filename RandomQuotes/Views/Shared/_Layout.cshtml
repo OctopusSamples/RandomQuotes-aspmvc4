@@ -1,4 +1,6 @@
-﻿    <!DOCTYPE html>
+﻿@using System.Configuration
+@using Microsoft.VisualStudio.Web.PageInspector.Runtime
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -36,7 +38,7 @@
     @RenderBody()
     <hr />
     <footer>
-        @*                <p>&copy; 2018 - Random Quotes | Version @Settings.Value.AppVersion running in @Settings.Value.EnvironmentName</p>*@
+        <p>&copy; 2018 - Random Quotes | Version @ConfigurationManager.AppSettings["ReleaseVersion"] running in @ConfigurationManager.AppSettings["EnvironmentName"]</p>
     </footer>
 </div>
 
