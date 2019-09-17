@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>RandomQuotes</id>
+        <title>A Sample ASP.NET 4.5 Application</title>
+        <version>1.0.0</version>
+        <authors>Octopus Deploy</authors>
+        <owners>Octopus Deploy</owners>
+        <licenseUrl>https://github.com/OctopusSamples/RandomQuotes-aspmvc4</licenseUrl>
+        <projectUrl>https://github.com/OctopusSamples/RandomQuotes-aspmvc4</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>A sample project</description>
+    </metadata>
+    <files>
+        <file src="bin\roslyn\*.*" target="bin\roslyn" />
+    </files>
+</package>
