@@ -1,0 +1,70 @@
+name: RandomQuotes Cloud Service
+on:
+  push:
+jobs:
+  build:
+    runs-on: windows-2019
+    steps:
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+    - uses: actions/checkout@v1
+    - name: Nuget Restore
+      shell: powershell
+      run: nuget restore RandomQuotes.sln
+    - name: MSBuild
+      shell: powershell
+      run: msbuild.exe RandomQuotes.sln /p:Configuration=Release "/p:Platform=Any CPU" /p:DeployOnBuild=true /p:DeployTarget=Package /p:AutoParameterizationWebConfigConnectionStrings=false
+    # These files were found under C:\Program Files\Microsoft SDKs\Azure\.NET SDK\v2.9\bin on a local install
+    - name: Download cspack
+      shell: powershell
+      run: Invoke-WebRequest -Uri https://octopus-guides.s3.amazonaws.com/cspack/cspack.zip -OutFile cspack.zip
+    - name: Extract cspack
+      shell: powershell
+      run: mkdir cspack; Expand-Archive -LiteralPath cspack.zip -DestinationPath cspack
+    
+    - name: CSPack ARM
+      shell: powershell
+      run: .\cspack\cspack.exe ServiceDefinitionARM.csdef "/role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp" "/rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt" "/sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp" "/out:RandomQuotes-Azure-Release-ARM.cspkg"
+    - name: Create Octopus ARM Package
+      shell: powershell
+      run: Get-ChildItem -Path RandomQuotes-Azure-Release-ARM.cspkg, ServiceConfiguration.Cloud.ARM.cscfg, ServiceDefinitionARM.csdef | Compress-Archive -DestinationPath RandomQuotes-Azure-Release-ARM.1.0.${{ github.run_number }}.zip
+        
+    - name: CSPack ASM
+      shell: powershell
+      run: .\cspack\cspack.exe ServiceDefinition.csdef "/role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp" "/rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt" "/sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp" "/out:RandomQuotes-Azure-Release-ASM.cspkg"
+    - name: Create Octopus ASM Package
+      shell: powershell
+      run: Get-ChildItem -Path RandomQuotes-Azure-Release-ASM.cspkg, ServiceConfiguration.Cloud.cscfg, ServiceDefinition.csdef | Compress-Archive -DestinationPath RandomQuotes-Azure-Release-ASM.1.0.${{ github.run_number }}.zip
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: 0.0.${{ github.run_number }}
+        release_name: Release 0.0.${{ github.run_number }}
+        draft: false
+        prerelease: false
+        
+    - name: Upload ARM Zip Release Asset
+      id: upload-arm-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: .\RandomQuotes-Azure-Release-ARM.1.0.${{ github.run_number }}.zip
+        asset_name: RandomQuotes-Azure-Release-ARM.1.0.${{ github.run_number }}.zip
+        asset_content_type: application/zip
+        
+    - name: Upload ASM Zip Release Asset
+      id: upload-asm-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: .\RandomQuotes-Azure-Release-ASM.1.0.${{ github.run_number }}.zip
+        asset_name: RandomQuotes-Azure-Release-ASM.1.0.${{ github.run_number }}.zip
+        asset_content_type: application/zip        
