@@ -1,0 +1,14 @@
+name: RandomQuotes Cloud Service
+on:
+  push:
+    runs-on: windows-2019
+jobs:
+  build:
+    steps:
+    - uses: actions/checkout@v1
+    - name: MSBuild
+      shell: powershell
+      run: msbuild.exe RandomQuotes.sln /p:Configuration=Release "/p:Platform=Any CPU" /p:DeployOnBuild=true /p:DeployTarget=Package /p:AutoParameterizationWebConfigConnectionStrings=false
+    - name: CSPack
+      shell: powershell
+      run: cspack.exe ServiceDefinition.csdef /role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp /rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt /sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp /out:RandomQuotes-Azure-Release.cspkg
