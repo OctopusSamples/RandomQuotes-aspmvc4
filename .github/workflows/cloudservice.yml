@@ -25,14 +25,14 @@ jobs:
     - name: CSPack ARM
       shell: powershell
       run: .\cspack\cspack.exe ServiceDefinitionARM.csdef "/role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp" "/rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt" "/sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp" "/out:RandomQuotes-Azure-Release-ARM.cspkg"
-    - name: Create Octopus Package
+    - name: Create Octopus ARM Package
       shell: powershell
       run: Get-ChildItem -Path RandomQuotes-Azure-Release-ARM.cspkg, ServiceConfiguration.Cloud.ARM.cscfg | Compress-Archive -DestinationPath RandomQuotes-Azure-Release-ARM.1.0.${{ github.run_number }}.zip
         
     - name: CSPack ASM
       shell: powershell
       run: .\cspack\cspack.exe ServiceDefinition.csdef "/role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp" "/rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt" "/sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp" "/out:RandomQuotes-Azure-Release-ASM.cspkg"
-    - name: Create Octopus Package
+    - name: Create Octopus ASM Package
       shell: powershell
       run: Get-ChildItem -Path RandomQuotes-Azure-Release-ASM.cspkg, ServiceConfiguration.Cloud.cscfg | Compress-Archive -DestinationPath RandomQuotes-Azure-Release-ASM.1.0.${{ github.run_number }}.zip
         
