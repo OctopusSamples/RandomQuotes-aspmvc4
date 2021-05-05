@@ -36,6 +36,10 @@ jobs:
       shell: powershell
       run: Get-ChildItem -Path RandomQuotes-Azure-Release-ASM.cspkg, ServiceConfiguration.Cloud.cscfg, ServiceDefinition.csdef | Compress-Archive -DestinationPath RandomQuotes-Azure-Release-ASM.1.0.${{ github.run_number }}.zip
         
+    - name: MSBuild OctoPack
+      shell: powershell
+      run: msbuild.exe msbuild RandomQuotes.sln /p:Configuration=Release "/p:Platform=Any CPU" /p:OctoPackEnforceAddingFiles=true
+        
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -67,4 +71,15 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: .\RandomQuotes-Azure-Release-ASM.1.0.${{ github.run_number }}.zip
         asset_name: RandomQuotes-Azure-Release-ASM.1.0.${{ github.run_number }}.zip
-        asset_content_type: application/zip        
+        asset_content_type: application/zip     
+        
+    - name: Upload Octopacked Release Asset
+      id: upload-asm-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: .\RandomQuotes\obj\octopacked\RandomQuotes.1.0.4.nupkg
+        asset_name: RandomQuotes.1.0.4.nupkg
+        asset_content_type: application/zip  
