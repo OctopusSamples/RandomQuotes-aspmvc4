@@ -48,7 +48,7 @@ jobs:
         prerelease: false
         
     - name: Upload ARM Zip Release Asset
-      id: upload-release-asset
+      id: upload-arm-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,7 +59,7 @@ jobs:
         asset_content_type: application/zip
         
     - name: Upload ASM Zip Release Asset
-      id: upload-release-asset
+      id: upload-asm-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
