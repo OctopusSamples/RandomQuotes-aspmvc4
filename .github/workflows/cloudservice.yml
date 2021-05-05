@@ -8,7 +8,7 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
     - uses: actions/checkout@v1
-    - name: MSBuild
+    - name: Nuget Restore
       shell: powershell
       run: nuget restore RandomQuotes.sln
     - name: MSBuild
