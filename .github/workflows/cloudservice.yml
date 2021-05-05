@@ -23,10 +23,10 @@ jobs:
       run: mkdir cspack; Expand-Archive -LiteralPath cspack.zip -DestinationPath cspack
     - name: CSPack
       shell: powershell
-      run: .\cspack\cspack.exe ServiceDefinition.csdef "/role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp" "/rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt" "/sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp" "/out:RandomQuotes-Azure-Release.cspkg"
+      run: .\cspack\cspack.exe ServiceDefinitionARM.csdef "/role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp" "/rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt" "/sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp" "/out:RandomQuotes-Azure-Release.cspkg"
     - name: Create Octopus Package
       shell: powershell
-      run: Get-ChildItem -Path RandomQuotes-Azure-Release.cspkg, ServiceConfiguration.Cloud.cscfg | Compress-Archive -DestinationPath RandomQuotes-Azure-Release.1.0.${{ github.run_number }}.zip
+      run: Get-ChildItem -Path RandomQuotes-Azure-Release.cspkg, ServiceConfiguration.Cloud.ARM.cscfg | Compress-Archive -DestinationPath RandomQuotes-Azure-Release.1.0.${{ github.run_number }}.zip
         
     - name: Create Release
       id: create_release
