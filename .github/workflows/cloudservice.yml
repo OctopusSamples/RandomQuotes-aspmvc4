@@ -14,6 +14,12 @@ jobs:
     - name: MSBuild
       shell: powershell
       run: msbuild.exe RandomQuotes.sln /p:Configuration=Release "/p:Platform=Any CPU" /p:DeployOnBuild=true /p:DeployTarget=Package /p:AutoParameterizationWebConfigConnectionStrings=false
+    - name: Download cspack
+      shell: powershell
+      run: Invoke-WebRequest -Uri https://octopus-guides.s3.amazonaws.com/cspack/cspack.zip -OutFile cspack.zip
+    - name: Extract cspack
+      shell: powershell
+      run: mkdir cspack; Expand-Archive -LiteralPath cspack.zip -DestinationPath cspack
     - name: CSPack
       shell: powershell
-      run: cspack.exe ServiceDefinition.csdef /role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp /rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt /sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp /out:RandomQuotes-Azure-Release.cspkg
+      run: .\cspack\cspack.exe ServiceDefinition.csdef /role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp /rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt /sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp /out:RandomQuotes-Azure-Release.cspkg
