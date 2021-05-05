@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="AzureCloudServiceCSharp" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2015-04.2.6">
-  <WebRole name="WebRole1" vmsize="Standard_D1_v2">
+  <WebRole name="WebRole1" vmsize="Standard_A1">
     <Sites>
       <Site name="Web">
         <Bindings>
