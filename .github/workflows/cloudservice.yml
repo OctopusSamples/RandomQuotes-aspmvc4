@@ -23,4 +23,4 @@ jobs:
       run: mkdir cspack; Expand-Archive -LiteralPath cspack.zip -DestinationPath cspack
     - name: CSPack
       shell: powershell
-      run: .\cspack\cspack.exe ServiceDefinition.csdef /role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp /rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt /sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp /out:RandomQuotes-Azure-Release.cspkg
+      run: .\cspack\cspack.exe ServiceDefinition.csdef "/role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp" "/rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt" "/sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp" "/out:RandomQuotes-Azure-Release.cspkg"
