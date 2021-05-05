@@ -21,12 +21,20 @@ jobs:
     - name: Extract cspack
       shell: powershell
       run: mkdir cspack; Expand-Archive -LiteralPath cspack.zip -DestinationPath cspack
-    - name: CSPack
+    
+    - name: CSPack ARM
       shell: powershell
-      run: .\cspack\cspack.exe ServiceDefinitionARM.csdef "/role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp" "/rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt" "/sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp" "/out:RandomQuotes-Azure-Release.cspkg"
+      run: .\cspack\cspack.exe ServiceDefinitionARM.csdef "/role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp" "/rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt" "/sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp" "/out:RandomQuotes-Azure-Release-ARM.cspkg"
     - name: Create Octopus Package
       shell: powershell
-      run: Get-ChildItem -Path RandomQuotes-Azure-Release.cspkg, ServiceConfiguration.Cloud.ARM.cscfg | Compress-Archive -DestinationPath RandomQuotes-Azure-Release.1.0.${{ github.run_number }}.zip
+      run: Get-ChildItem -Path RandomQuotes-Azure-Release-ARM.cspkg, ServiceConfiguration.Cloud.ARM.cscfg | Compress-Archive -DestinationPath RandomQuotes-Azure-Release-ARM.1.0.${{ github.run_number }}.zip
+        
+    - name: CSPack ASM
+      shell: powershell
+      run: .\cspack\cspack.exe ServiceDefinition.csdef "/role:WebRole1;RandomQuotes\obj\Production\Package\PackageTmp" "/rolePropertiesFile:WebRole1;.\AzureRoleProperties.txt" "/sitePhysicalDirectories:WebRole1;Web;RandomQuotes\obj\Production\Package\PackageTmp" "/out:RandomQuotes-Azure-Release-ASM.cspkg"
+    - name: Create Octopus Package
+      shell: powershell
+      run: Get-ChildItem -Path RandomQuotes-Azure-Release-ASM.cspkg, ServiceConfiguration.Cloud.cscfg | Compress-Archive -DestinationPath RandomQuotes-Azure-Release-ASM.1.0.${{ github.run_number }}.zip
         
     - name: Create Release
       id: create_release
@@ -39,13 +47,24 @@ jobs:
         draft: false
         prerelease: false
         
-    - name: Upload Zip Release Asset
+    - name: Upload ARM Zip Release Asset
       id: upload-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: .\RandomQuotes-Azure-Release.1.0.${{ github.run_number }}.zip
-        asset_name: RandomQuotes-Azure-Release.1.0.${{ github.run_number }}.zip
+        asset_path: .\RandomQuotes-Azure-Release-ARM.1.0.${{ github.run_number }}.zip
+        asset_name: RandomQuotes-Azure-Release-ARM.1.0.${{ github.run_number }}.zip
         asset_content_type: application/zip
+        
+    - name: Upload ASM Zip Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: .\RandomQuotes-Azure-Release-ASM.1.0.${{ github.run_number }}.zip
+        asset_name: RandomQuotes-Azure-Release-ASM.1.0.${{ github.run_number }}.zip
+        asset_content_type: application/zip        
