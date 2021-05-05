@@ -14,6 +14,7 @@ jobs:
     - name: MSBuild
       shell: powershell
       run: msbuild.exe RandomQuotes.sln /p:Configuration=Release "/p:Platform=Any CPU" /p:DeployOnBuild=true /p:DeployTarget=Package /p:AutoParameterizationWebConfigConnectionStrings=false
+    # These files were found under C:\Program Files\Microsoft SDKs\Azure\.NET SDK\v2.9\bin on a local install
     - name: Download cspack
       shell: powershell
       run: Invoke-WebRequest -Uri https://octopus-guides.s3.amazonaws.com/cspack/cspack.zip -OutFile cspack.zip
