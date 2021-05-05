@@ -10,6 +10,9 @@ jobs:
     - uses: actions/checkout@v1
     - name: MSBuild
       shell: powershell
+      run: nuget restore RandomQuotes.sln
+    - name: MSBuild
+      shell: powershell
       run: msbuild.exe RandomQuotes.sln /p:Configuration=Release "/p:Platform=Any CPU" /p:DeployOnBuild=true /p:DeployTarget=Package /p:AutoParameterizationWebConfigConnectionStrings=false
     - name: CSPack
       shell: powershell
